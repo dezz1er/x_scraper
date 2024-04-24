@@ -21,11 +21,14 @@ class XParsePost:
         username = os.getenv("USERNAME")
         password = os.getenv('PASSWORD')
         self.logger.info(f"Loggin with user:'{username}'")
-        login_url = "https://twitter.com/i/flow/login"
-        self.driver.open(login_url)
-        logging_service = LoginManager()
-        logging_service.x_login()
-
+        try:
+            logging_service = LoginManager(
+                self.driver, username, password
+            )
+            logging_service.x_login()
+            self.logger.info(f'Logged into {username}')
+        except Exception as e:
+            self.logger.error(e)
 
     def parse_url(self) -> None:
         self.driver.open(url)
@@ -36,4 +39,4 @@ if __name__ == "__main__":
     logger = setup_logger()
     url = "https://twitter.com/elonmusk"
     driver = SeleniumBaseManager()
-    XParsePost(logger, url, driver).parse_url()
+    XParsePost(logger, url, driver).auth()
